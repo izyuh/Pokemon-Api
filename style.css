@@ -8,7 +8,6 @@
     padding: 0;
     margin: 0;
     font-family: 'PokemonFont', sans-serif;
-;
 }
 
 body {
@@ -16,20 +15,6 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #FFFFF0;
-}
-
-#pokemon-count {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    outline: 4px solid #3b4cca;
-    border-radius: 10px;
-    color: #ffde00;
-    background-color: white;
-    padding: 0 10px;
-    letter-spacing: 2px;
 }
 
 h1{
@@ -37,6 +22,7 @@ h1{
     -webkit-text-stroke: 2px #3b4cca;
     text-shadow: 2px 2px 4px #000000;
     font-size: 7em;
+    letter-spacing: 6px;
 }
 
 #pokemon-list {
@@ -45,6 +31,7 @@ h1{
     gap: 15px;
     width: 90%;
     margin: 20px;
+    align-items: stretch;
 }
 
 li {
@@ -61,12 +48,11 @@ li {
     margin-bottom: 10px;
     text-shadow: 1px 1px 2px #000000;
     -webkit-text-stroke: 1px black;
-    transition: 0.3s;
-}
+    animation : appear  ease-in-out;
+    animation-timeline: view();
+    animation-range: entry 0 cover 10%;
+    letter-spacing: 3px;
 
-li:hover {
-    scale: 1.05;
-    background-color: #3b4ccabb;
 }
 
 button {
@@ -88,13 +74,12 @@ button:active {
     transform: scale(0.95);
 }
 
-hidden {
-    opacity: 0;
-    transform: translateY(0px); /* Start slightly below */
-    transition: opacity 8s ease, transform 8s ease; /* Smooth transition */
-}
 
-.visible {
-    opacity: 1;
-    transform: translateY(0); /* Move to original position */
+@keyframes appear {
+    from {
+        scale: .5;
+    }
+    to {
+        scale : 1;
+    }
 }

@@ -14,9 +14,12 @@ async function fetchData() {
   const response = await fetch(url);
   const data = await response.json();
   const pokemons = data.results;
+  
+
   console.log(pokemons);
 
   pokemons.map((pokemon) => {
+
     const a = document.createElement("a");
     a.href = pokemon.url;
     a.target = "_blank"; // Open in new tab
@@ -40,35 +43,20 @@ async function fetchData() {
     pokemonCountSpan.innerHTML = `${pokemonCount}`;
   });
 
-  observeElements(); // Observe new elements
 
-  //fetches next 8 pokemon pages
-  if (data.next && count < 9) {
-    url = data.next;
-    fetchData();
-    count++;
-  } else if(!data.next) { // if there is no more pages hide the button to fetch more
-    button.style.display = "none"; 
-  } else {// if the count is over 8, set the url to the next page anyway and then reset the count
-    url = data.next;
-    count = 0;
+  if(data.next) {
+    if(count < 9) {
+      count++;
+      url = data.next;
+      fetchData();
+    } else {
+      url = data.next;
+      count = 0;
+    }
   }
 
   return data;
 }
 
-function observeElements() {
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry, index) => {
-      if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          entry.target.classList.remove("hidden");
-          observer.unobserve(entry.target); // Stop observing once visible})
-      }
-    });
-  });
 
-  // Observe all hidden list items
-  document.querySelectorAll(".hidden").forEach((li) => observer.observe(li));
-}
 
