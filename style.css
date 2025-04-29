@@ -7,7 +7,6 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-    font-family: 'PokemonFont', sans-serif;
 }
 
 body {
@@ -15,19 +14,14 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background-image: url('./forest.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-#pokemon-count {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background-color: #3b4cca;
-    color: #ffde00;
-    letter-spacing: 2px;
-    outline: 1px solid black;
-    border-radius: 10px;
-    padding: 0 20px;
-    z-index: 1000;
+#load {
+    padding: 10px 20px;
 }
 
 h1{
@@ -37,18 +31,29 @@ h1{
     font-size: 7em;
     letter-spacing: 6px;
     user-select: none;
+        font-family: 'PokemonFont', sans-serif;
+}
+
+.types {
+    margin: 10px;
+}
+
+span {
+    border-radius: 10px;
+    padding: 3px 10px;
+    margin: 2px;
 }
 
 #pokemon-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
+    gap: 25px;
     width: 90%;
     margin: 20px;
     align-items: stretch;
 }
 
-a:visited {
+a:visited, a:link {
     text-decoration: none;
 }
 
@@ -65,7 +70,6 @@ li {
     font-size: 2em;
     margin-bottom: 10px;
     text-shadow: 1px 1px 2px #000000;
-    -webkit-text-stroke: 1px black;
     animation : appear  ease-in-out;
     animation-timeline: view();
     animation-range: entry 0 cover 10%;

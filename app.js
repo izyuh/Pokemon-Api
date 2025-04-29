@@ -2,9 +2,7 @@ let url = "https://pokeapi.co/api/v2/pokemon/";
 const container = document.getElementById("pokemon-list");
 const button = document.getElementById("load");
 
-const pokemonCountSpan = document.getElementById("pokemon-count");
 let count = 0;
-let pokemonCount = 0;
 
 const typeMap = new Map([
   ["normal", "gray"],
@@ -13,18 +11,18 @@ const typeMap = new Map([
   ["poison", "purple"],
   ["ground", "brown"],
   ["rock", "gray"],
-  ["bug", "green"],
+  ["bug", "lightgreen"],
   ["ghost", "purple"],
-  ["steel", "silver"],
+  ["steel", "#5f646e"],
   ["fire", "red"],
   ["water", "blue"],
   ["grass", "green"],
-  ["electric", "yellow"],
-  ["psychic", "pink"],
+  ["electric", "#fff700"],
+  ["psychic", "#f25ae6"],
   ["ice", "lightblue"],
   ["dragon", "darkblue"],
-  ["dark", "black"],
-  ["fairy", "pink"],
+  ["dark", "#0d2a45"],
+  ["fairy", "#eda8f0"],
 ]);
 
 async function fetchData() {
@@ -34,13 +32,14 @@ async function fetchData() {
 
   const response = await fetch(url);
   const data = await response.json();
-  const pokemons = data.results;
+  const pokemons = data.results;  //list of 20 pokemons
+
 
   // Fetch detailed data for each Pokémon
   const detailedData = await Promise.all(
-    pokemons.map(async (pokemon) => {
-      const pokemonResponse = await fetch(pokemon.url); // Fetch individual Pokémon data
-      console.log(pokemonResponse);
+
+    pokemons.map(async (pokemon) => { 
+      const pokemonResponse = await fetch(pokemon.url); // Fetch individual Pokémon data using url
       return pokemonResponse.json(); // Return the detailed data
     })
   );
@@ -48,7 +47,7 @@ async function fetchData() {
   // Process the detailed data
   detailedData.forEach((pokemon) => {
     const a = document.createElement("a");
-    a.href = pokemon.url;
+    a.href = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`;
     a.target = "_blank"; // Open in new tab
     const li = document.createElement("li");
 
@@ -57,13 +56,14 @@ async function fetchData() {
       pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
     li.innerHTML = `<h3>${capitalizedName}</h3>`;
 
-    // Add picture
+    // Add sprite
     const img = document.createElement("img");
     img.src = pokemon.sprites.front_default; // Use the sprite URL from the detailed data
     li.appendChild(img);
 
     //add type
     const typeDiv = document.createElement("div"); //makes div for types
+    typeDiv
     const types = pokemon.types.map((type) => type.type.name); //loops through and sets types to pokemon types
 
     types.forEach((type) => {
@@ -80,8 +80,6 @@ async function fetchData() {
     li.classList.add("hidden"); // Add hidden class initially
     a.appendChild(li);
     container.appendChild(a);
-    pokemonCount++;
-    pokemonCountSpan.innerHTML = `${pokemonCount}`;
   });
 
   // Handle pagination
