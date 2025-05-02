@@ -2,7 +2,12 @@ let url = "https://pokeapi.co/api/v2/pokemon/";
 const container = document.getElementById("pokemon-list");
 const button = document.getElementById("load");
 
-let count = 0;
+const search = document.getElementById("search");
+
+let count = 1;
+
+let storedData = localStorage.getItem("pokemonData"); //gets data from local storage
+let allPokemonData = storedData ? JSON.parse(storedData) : []; // if data, then convert to json, else empty array
 
 const typeMap = new Map([
   ["normal", "gray"],
@@ -26,44 +31,35 @@ const typeMap = new Map([
 ]);
 
 async function fetchData() {
-  if (button.innerHTML === "Fetch") {
-    button.innerHTML = "Load More";
-  }
-
-  const response = await fetch(url);
-  const data = await response.json();
-  const pokemons = data.results;  //list of 20 pokemons
-
-
-  // Fetch detailed data for each Pokémon
-  const detailedData = await Promise.all(
-
-    pokemons.map(async (pokemon) => { 
-      const pokemonResponse = await fetch(pokemon.url); // Fetch individual Pokémon data using url
-      return pokemonResponse.json(); // Return the detailed data
-    })
+  const data = await fetch(url).then((response) => response.json()); // vvv fetches data
+  const pokemons = data.results; // vvv
+  const pokemonDetails = await Promise.all(
+    //gets all details at the same time
+    pokemons.map((pokemon) =>
+      fetch(pokemon.url).then((response) => response.json())
+    )
   );
+  const sortedDetails = pokemonDetails.sort((a, b) => a.id - b.id); // sorts details by id
 
-  // Process the detailed data
-  detailedData.forEach((pokemon) => {
+  sortedDetails.forEach((pokemon) => {
     const a = document.createElement("a");
     a.href = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`;
     a.target = "_blank"; // Open in new tab
-    const li = document.createElement("li");
 
-    // Set name to h3
+    const li = document.createElement("li"); //creates li for each pokemon
+
+    ////////////////////////////////////////////////////////add name////////////////////////////////////////////////////////
     const capitalizedName =
       pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-    li.innerHTML = `<h3>${capitalizedName}</h3>`;
+    li.innerHTML = `<h3>${capitalizedName}</h3>`; //capitalizes the first letter and adds to li
 
-    // Add sprite
+    ////////////////////////////////////////////////////////add image////////////////////////////////////////////////////////
     const img = document.createElement("img");
     img.src = pokemon.sprites.front_default; // Use the sprite URL from the detailed data
-    li.appendChild(img);
+    li.appendChild(img); // adds image to li
 
-    //add type
+    ////////////////////////////////////////////////////////add type////////////////////////////////////////////////////////
     const typeDiv = document.createElement("div"); //makes div for types
-    typeDiv
     const types = pokemon.types.map((type) => type.type.name); //loops through and sets types to pokemon types
 
     types.forEach((type) => {
@@ -76,23 +72,20 @@ async function fetchData() {
     });
     li.appendChild(typeDiv);
 
+    ////////////////////////////////////////////////////////hides card for animation////////////////////////////////////////////////////////
     // Add to list and make hidden
     li.classList.add("hidden"); // Add hidden class initially
     a.appendChild(li);
+
     container.appendChild(a);
   });
 
-  // Handle pagination
-  if (data.next) {
-    if (count < 9) {
-      count++;
-      url = data.next;
-      fetchData();
-    } else {
-      url = data.next;
-      count = 0;
-    }
-  }
+  search.style.transform = "translateY(150%)";
 
-  return data;
+  // if (data.next) {
+  //   url = data.next;
+  //   fetchData();
+  // } else {
+  //   console.log("All data fetched");
+  // }
 }

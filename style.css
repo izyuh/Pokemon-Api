@@ -20,8 +20,19 @@ body {
     background-attachment: fixed;
 }
 
+input, input:active {
+    font-size: 2em;
+    border-radius: 20px;
+    padding: 4px 4px 4px 10px;
+    margin: 10px;
+    border: none;
+    outline: none;
+    transform: translateY(-150%);
+    transition: transform  1s ease-in-out;
+}
+
 #load {
-    padding: 10px 20px;
+    padding: 10px 20px; /* for fetch button */
 }
 
 h1{
@@ -44,7 +55,7 @@ span {
     margin: 2px;
 }
 
-#pokemon-list {
+ul {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
