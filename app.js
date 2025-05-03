@@ -4,10 +4,21 @@ const button = document.getElementById("load");
 
 const search = document.getElementById("search");
 
-let count = 1;
+search.addEventListener("input", (e) => filter(e.target.value));
 
-let storedData = localStorage.getItem("pokemonData"); //gets data from local storage
-let allPokemonData = storedData ? JSON.parse(storedData) : []; // if data, then convert to json, else empty array
+function filter(input) {
+  const li = document.querySelectorAll("li");
+  li.forEach((item) => {
+    const parent = item.parentElement; // Get the parent <a> element
+    if (item.textContent.toLowerCase().includes(input.toLowerCase().trim())) {
+      parent.style.display = "block"; // Show the parent <a> tag
+    } else {
+      parent.style.display = "none"; // Hide the parent <a> tag
+    }
+  });
+}
+
+let count = 1;
 
 const typeMap = new Map([
   ["normal", "gray"],
@@ -41,6 +52,7 @@ async function fetchData() {
   );
   const sortedDetails = pokemonDetails.sort((a, b) => a.id - b.id); // sorts details by id
 
+
   sortedDetails.forEach((pokemon) => {
     const a = document.createElement("a");
     a.href = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`;
@@ -48,10 +60,20 @@ async function fetchData() {
 
     const li = document.createElement("li"); //creates li for each pokemon
 
+    ////////////////////////////////////////////////////////add id////////////////////////////////////////////////////////
+
+    const id = document.createElement('span');
+    id.classList.add('id');
+    id.textContent = pokemon.id;
+    li.appendChild(id);
+
     ////////////////////////////////////////////////////////add name////////////////////////////////////////////////////////
     const capitalizedName =
       pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-    li.innerHTML = `<h3>${capitalizedName}</h3>`; //capitalizes the first letter and adds to li
+
+    const nameHTML = document.createElement('h3');
+    nameHTML.innerHTML = capitalizedName;
+    li.appendChild(nameHTML);
 
     ////////////////////////////////////////////////////////add image////////////////////////////////////////////////////////
     const img = document.createElement("img");
@@ -82,10 +104,12 @@ async function fetchData() {
 
   search.style.transform = "translateY(150%)";
 
-  // if (data.next) {
-  //   url = data.next;
-  //   fetchData();
-  // } else {
-  //   console.log("All data fetched");
-  // }
+  if (data.next && count < 4) {
+    url = data.next;
+    count++;
+    fetchData();
+  } else {
+    console.log("All data fetched");
+    count = 0;
+  }
 }

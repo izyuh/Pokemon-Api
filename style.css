@@ -23,17 +23,22 @@ body {
 input, input:active {
     font-size: 2em;
     border-radius: 20px;
-    padding: 4px 4px 4px 10px;
-    margin: 10px;
+    padding: 10px 20px;
     border: none;
     outline: none;
     transform: translateY(-150%);
     transition: transform  1s ease-in-out;
+    position: sticky;
+    top: 0px;
+    z-index: 100;
+    box-shadow: 2px 2px 2px black;
 }
 
 #load {
     padding: 10px 20px; /* for fetch button */
 }
+
+
 
 h1{
     color: #ffde00;
@@ -42,7 +47,8 @@ h1{
     font-size: 7em;
     letter-spacing: 6px;
     user-select: none;
-        font-family: 'PokemonFont', sans-serif;
+    font-family: 'PokemonFont', sans-serif;
+    margin-top: 40px;
 }
 
 .types {
@@ -68,6 +74,17 @@ a:visited, a:link {
     text-decoration: none;
 }
 
+.id {
+    position: absolute;
+    top: 5px;
+    left: 15px;
+    display: block;
+}
+
+h3 {
+    display: block;
+}
+
 li {
     list-style-type: none;
     outline: 4px solid #ffde00;
@@ -84,7 +101,7 @@ li {
     animation : appear  ease-in-out;
     animation-timeline: view();
     animation-range: entry 0 cover 10%;
-    transition: 0.3s;
+    transition: all 0.3s ease-in-out;
     letter-spacing: 3px;
     min-height: 100%;
     display: flex;
