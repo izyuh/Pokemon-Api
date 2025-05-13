@@ -1,22 +1,7 @@
 let url = "https://pokeapi.co/api/v2/pokemon/";
 const container = document.getElementById("pokemon-list");
 const button = document.getElementById("load");
-
 const search = document.getElementById("search");
-
-search.addEventListener("input", (e) => filter(e.target.value));
-
-function filter(input) {
-  const li = document.querySelectorAll("li");
-  li.forEach((item) => {
-    const parent = item.parentElement; // Get the parent <a> element
-    if (item.textContent.toLowerCase().includes(input.toLowerCase().trim())) {
-      parent.style.display = "block"; // Show the parent <a> tag
-    } else {
-      parent.style.display = "none"; // Hide the parent <a> tag
-    }
-  });
-}
 
 let count = 1;
 
@@ -41,19 +26,67 @@ const typeMap = new Map([
   ["fairy", "#eda8f0"],
 ]);
 
+const savedData = localStorage.getItem("rawPokemon")
+  ? JSON.parse(localStorage.getItem("rawPokemon"))
+  : [];
+let pokemons;
+////////////////////////////////////////////   All set functions above   ////////////////////////////////////////////////
+
+// search function //
+search.addEventListener("input", (e) => filter(e.target.value));
+
+function filter(input) {
+  const li = document.querySelectorAll("li");
+  li.forEach((item) => {
+    const parent = item.parentElement; // Get the parent <a> element
+    if (item.textContent.toLowerCase().includes(input.toLowerCase().trim())) {
+      parent.style.display = "block"; // Show the parent <a> tag
+    } else {
+      parent.style.display = "none"; // Hide the parent <a> tag
+    }
+  });
+}
+
+// fetch data from local storage if there is any //
 async function fetchData() {
-  const data = await fetch(url).then((response) => response.json()); // vvv fetches data
-  const pokemons = data.results; // vvv
-  const pokemonDetails = await Promise.all(
-    //gets all details at the same time
-    pokemons.map((pokemon) =>
-      fetch(pokemon.url).then((response) => response.json())
-    )
-  );
-  const sortedDetails = pokemonDetails.sort((a, b) => a.id - b.id); // sorts details by id
 
+  if(savedData.length === 0) {
+    fetchA();
+  } else {
+    renderPokemon();
+  }
 
-  sortedDetails.forEach((pokemon) => {
+  async function fetchA() {
+    const data = await fetch(url).then((res) => res.json());
+    pokemons = data.results;  //gets initial data
+
+    const pokemonDetails = await Promise.all(
+      pokemons.map((pokemon) => fetch(pokemon.url).then((res) => res.json())) //gets detailed data
+    );
+
+    let iDetails = pokemonDetails.map((pokemon) => ({
+      name: pokemon.name,
+      id: pokemon.id,
+      sprite: pokemon.sprites.front_default || 'no image',
+      types: pokemon.types
+    }))
+
+    savedData.push(...iDetails); // pushes details to variable to save
+
+    if (data.next) {
+      url = data.next;
+      fetchA();
+      console.log('data fetched')
+    } else {
+      localStorage.setItem('rawPokemon', JSON.stringify(savedData));
+      renderPokemon();
+    }
+  }
+}
+
+function renderPokemon() {
+  rawPokemon = JSON.parse(localStorage.getItem("rawPokemon"));
+  rawPokemon.forEach((pokemon) => {
     const a = document.createElement("a");
     a.href = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`;
     a.target = "_blank"; // Open in new tab
@@ -62,22 +95,22 @@ async function fetchData() {
 
     ////////////////////////////////////////////////////////add id////////////////////////////////////////////////////////
 
-    const id = document.createElement('span');
-    id.classList.add('id');
-    id.textContent = pokemon.id;
+    const id = document.createElement("span");
+    id.classList.add("id");
+    id.textContent = pokemon.id.toString().padStart(3, "0");
     li.appendChild(id);
 
     ////////////////////////////////////////////////////////add name////////////////////////////////////////////////////////
     const capitalizedName =
       pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 
-    const nameHTML = document.createElement('h3');
+    const nameHTML = document.createElement("h3");
     nameHTML.innerHTML = capitalizedName;
     li.appendChild(nameHTML);
 
     ////////////////////////////////////////////////////////add image////////////////////////////////////////////////////////
     const img = document.createElement("img");
-    img.src = pokemon.sprites.front_default; // Use the sprite URL from the detailed data
+    img.src = pokemon.sprite || "no image"; // Use the sprite URL from the detailed data
     li.appendChild(img); // adds image to li
 
     ////////////////////////////////////////////////////////add type////////////////////////////////////////////////////////
@@ -103,13 +136,4 @@ async function fetchData() {
   });
 
   search.style.transform = "translateY(150%)";
-
-  if (data.next && count < 4) {
-    url = data.next;
-    count++;
-    fetchData();
-  } else {
-    console.log("All data fetched");
-    count = 0;
-  }
 }
