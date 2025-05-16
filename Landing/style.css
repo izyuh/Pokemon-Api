@@ -19,6 +19,8 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
+
+    overflow-y: scroll;
 }
 
 input, input:active {
@@ -28,11 +30,12 @@ input, input:active {
     border: none;
     outline: none;
     transform: translateY(-150%);
-    transition: transform  1s ease-in-out;
+    transition: transform  .5s ease-in-out;
     position: sticky;
     top: 0px;
     z-index: 100;
     box-shadow: 2px 2px 2px black;
+    text-align: left;
 }
 
 #load {
@@ -76,9 +79,6 @@ a:visited, a:link {
 }
 
 .id {
-    /* position: absolute;
-    top: 5px;
-    left: 15px; */
     display: block;
     font-weight: 700;
     font-size: smaller;
