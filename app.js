@@ -64,7 +64,7 @@ async function fetchData() {
     let iDetails = pokemonDetails.map((pokemon) => ({
       name: pokemon.name,
       id: pokemon.id,
-      sprite: pokemon.sprites.front_default || "Landing/pokeball.png",
+      sprite: pokemon.sprites.front_default || "pokeball.png",
       types: pokemon.types,
     }));
 
