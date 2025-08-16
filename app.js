@@ -52,7 +52,8 @@ async function fetchData() {
     renderPokemonBatch(savedData);
   }
 
-  async function fetchA() {   //fetches from api
+  async function fetchA() {
+    //fetches from api
     const data = await fetch(url).then((res) => res.json());
     pokemons = data.results; // gets initial data
 
@@ -63,7 +64,7 @@ async function fetchData() {
     let iDetails = pokemonDetails.map((pokemon) => ({
       name: pokemon.name,
       id: pokemon.id,
-      sprite: pokemon.sprites.front_default || "../Landing/pokeball.png",
+      sprite: pokemon.sprites.front_default || "Landing/pokeball.png",
       types: pokemon.types,
     }));
 
@@ -83,13 +84,6 @@ async function fetchData() {
 // General render function for both batch and all
 function renderPokemonBatch(pokemonArray) {
   pokemonArray.forEach((pokemon) => {
-    const a = document.createElement("a");
-    a.href = "../Pokemon/pokemon.html";
-    a.target = "_blank";
-    a.addEventListener("click", () => {
-      console.log('clicked')
-      localStorage.setItem("selectedID", pokemon.id);
-    });
 
     const li = document.createElement("li");
 
@@ -124,7 +118,6 @@ function renderPokemonBatch(pokemonArray) {
     li.appendChild(typeDiv);
 
     li.classList.add("hidden");
-    a.appendChild(li);
-    container.appendChild(a);
+    container.appendChild(li);
   });
 }

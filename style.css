@@ -1,7 +1,8 @@
 @font-face {
     font-family: 'PokemonFont';
-    src: url('./PokeFont.ttf') format('truetype');
+    src: url('/Resources/PokeFont.ttf') format('truetype');
 }
+
 
 * {
     box-sizing: border-box;
@@ -15,7 +16,7 @@ body {
     align-items: center;
     flex-direction: column;
 
-    background-image: url('./forest.jpg');
+    background-image: url('/Resources/forest.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -65,19 +66,7 @@ span { /* pokemon ID */
     margin: 2px;
 }
 
-ul {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 25px;
-    width: 70%;
-    margin: 20px;
-    align-items: stretch;
-}
-
-a:visited, a:link {
-    text-decoration: none;
-}
-
+body {
 .id {
     display: block;
     font-weight: 700;
@@ -86,6 +75,15 @@ a:visited, a:link {
 
 h3 {
     display: block;
+}
+
+ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    width: 80%;
+    margin: 0px;
+    align-items: stretch;
 }
 
 li {
@@ -105,11 +103,8 @@ li {
     animation-range: entry 0 cover 10%;
     transition: all 0.3s ease-in-out;
     letter-spacing: 3px;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
+
 
 li img {
     margin-top: auto;
@@ -167,4 +162,3 @@ button:active {
         margin: 0px;
         align-items: stretch;
     }
-}
