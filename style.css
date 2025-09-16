@@ -30,8 +30,10 @@ input, input:active {
     padding: 10px 20px;
     border: none;
     outline: none;
-    transform: translateY(-150%);
-    transition: transform  .5s ease-in-out;
+
+    transform: translateY(-120%);
+    transition: transform  .5s ease;
+
     position: sticky;
     top: 0px;
     z-index: 100;
@@ -66,7 +68,6 @@ span { /* pokemon ID */
     margin: 2px;
 }
 
-body {
 .id {
     display: block;
     font-weight: 700;
@@ -98,9 +99,6 @@ li {
     user-select: none;
     font-size: 2em;
     text-shadow: 1px 1px 2px #000000;
-    animation : appear  ease-in-out;
-    animation-timeline: view();
-    animation-range: entry 0 cover 10%;
     transition: all 0.3s ease-in-out;
     letter-spacing: 3px;
 }
@@ -136,14 +134,6 @@ button:active {
     transform: scale(0.95);
 }
 
-@keyframes appear {
-    from {
-        scale: .5;
-    }
-    to {
-        scale : 1;
-    }
-}
 
 @media (max-width: 560px) {
 
@@ -162,3 +152,4 @@ button:active {
         margin: 0px;
         align-items: stretch;
     }
+}

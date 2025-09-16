@@ -3,6 +3,8 @@ const container = document.getElementById("pokemon-list");
 const button = document.getElementById("load");
 const search = document.getElementById("search");
 
+let debounceTimeout;
+
 const typeMap = new Map([
   ["normal", "gray"],
   ["fighting", "orange"],
@@ -30,29 +32,41 @@ const savedData = localStorage.getItem("rawPokemon") //gets data from localStora
 let pokemons;
 
 // Search function
-search.addEventListener("input", (e) => filter(e.target.value));
+search.addEventListener("input", (e) => {
+  
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    filter(e.target.value);
+  }, 500); // 700ms delay
+  }
+);
 
 function filter(input) {
+  console.log(input);
   const li = document.querySelectorAll("li");
-  li.forEach((item) => {
-    const parent = item.parentElement; // Get the parent <a> element
-    if (item.textContent.toLowerCase().includes(input.toLowerCase().trim())) {
-      parent.style.display = "block"; // Show the parent <a> tag
+  li.forEach((pokemon) => {
+    if (
+      pokemon
+        .querySelector("h3")
+        .innerText.toLowerCase().includes(input.toLowerCase().trim())
+    ) {
+      pokemon.style.display = "block";
     } else {
-      parent.style.display = "none"; // Hide the parent <a> tag
+      pokemon.style.display = "none";
     }
   });
 }
 
 // Fetch data from local storage if there is any
 async function fetchData() {
+
   if (savedData.length === 0) {
-    await fetchA(); // fetches from api
+    await fetchApi(); // fetches from api
   } else {
-    renderPokemonBatch(savedData);
+    renderPokemonBatch(savedData); //renders from localStorage
   }
 
-  async function fetchA() {
+  async function fetchApi() {
     //fetches from api
     const data = await fetch(url).then((res) => res.json());
     pokemons = data.results; // gets initial data
@@ -74,7 +88,7 @@ async function fetchData() {
 
     if (data.next) {
       url = data.next;
-      await fetchA();
+      await fetchApi();
     }
   }
 
@@ -83,6 +97,9 @@ async function fetchData() {
 
 // General render function for both batch and all
 function renderPokemonBatch(pokemonArray) {
+  search.style.transform = "translatey(60%)";
+
+
   pokemonArray.forEach((pokemon) => {
 
     const li = document.createElement("li");
@@ -102,7 +119,8 @@ function renderPokemonBatch(pokemonArray) {
     li.appendChild(nameHTML);
 
     const img = document.createElement("img");
-    img.src = pokemon.sprite;
+    img.loading = "lazy"; // Native lazy loading
+    img.src = pokemon.sprite ? pokemon.sprite : "./pokeball.png";
     li.appendChild(img);
 
     const typeDiv = document.createElement("div");
