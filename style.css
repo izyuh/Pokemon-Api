@@ -8,6 +8,7 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    user-select: none;
 }
 
 body {
@@ -103,6 +104,11 @@ li {
     letter-spacing: 3px;
 }
 
+#sentinel {
+  height: 1px;
+  width: 100%;
+  opacity: 0;
+}
 
 li img {
     margin-top: auto;
