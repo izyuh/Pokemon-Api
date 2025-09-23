@@ -53,14 +53,19 @@ search.addEventListener("input", (e) => {
 function filter(input) {
   if (input.trim() === "") {
     container.innerHTML = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
     render(renderBatch); // Render the current batch if search is cleared
     return;
   }
 
   const filtered = savedData.filter(pokemon =>
-    pokemon.name.toLowerCase().includes(input.toLowerCase().trim())
+    pokemon.name.toLowerCase().includes(input.toLowerCase().trim()) ||
+    pokemon.id.toString() === input.trim() ||
+    (pokemon.types.some(typeObj => typeObj.type.name.toLowerCase() === input.toLowerCase().trim()))
   );
   container.innerHTML = ""; // Clear the list
+  button.style.display = "none";
+
   render(filtered);         // Render only filtered Pokémon
 };
 
@@ -69,6 +74,7 @@ function filter(input) {
 async function fetchData() {savedData.length === 0 ? await fetchApi() : render(renderBatch);} //renders from localStorage or fetches from API
 
 async function fetchApi() {
+  let hasRun = false;
   //fetches from api
   const data = await fetch(url).then((res) => res.json());
   pokemons = data.results; // gets initial data
@@ -80,19 +86,23 @@ async function fetchApi() {
   let iDetails = pokemonDetails.map((pokemon) => ({
     name: pokemon.name,
     id: pokemon.id,
-    sprite: pokemon.sprites.front_default || "pokeball.png",
+    sprite: pokemon.sprites.front_default ? pokemon.sprites.front_default: "./Resources/pokeball.png",
     types: pokemon.types,
   }));
 
-  savedData.push(...iDetails); // pushes details to variable to save
+  savedData.push(...iDetails); // pushes details to variable to save xx x    j
   localStorage.setItem("rawPokemon", JSON.stringify(savedData));
 
   if (data.next) {
     url = data.next;
     await fetchApi();
-  } 
+  } else {
     button.style.display = "none";
-    render(renderBatch);
+    start = 0;
+    end = start + batchSize;
+    renderBatch = savedData.slice(start, end);
+    container.innerHTML = ""; // Clear the list before rendering
+    render(renderBatch)}
 }
 
 
@@ -120,7 +130,9 @@ function render(renderBatch) {
 
     const img = document.createElement("img"); // creates img for sprite
     img.loading = "lazy"; // Native lazy loading
-    img.src = pokemon.sprite ? pokemon.sprite : "pokeball.png";
+
+      img.src = pokemon.sprite;
+
     li.appendChild(img);
 
     const typeDiv = document.createElement("div"); // creates div for types 

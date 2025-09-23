@@ -31,6 +31,7 @@ input, input:active {
     padding: 10px 20px;
     border: none;
     outline: none;
+    max-width: 90vw;
 
     transform: translateY(-120%);
     transition: transform  .5s ease;
@@ -142,10 +143,6 @@ button:active {
 
 
 @media (max-width: 560px) {
-
-    input {
-        font-size: 1em;
-    }
 
     h1 {
         font-size: 4em;
