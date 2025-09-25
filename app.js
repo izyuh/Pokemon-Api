@@ -4,7 +4,7 @@ const button = document.getElementById("load");
 const search = document.getElementById("search");
 let debounceTimeout;
 
-
+const savedData = [];
 
 // pokemon type color map
 const typeMap = new Map([
@@ -29,11 +29,12 @@ const typeMap = new Map([
 ]);
 
 // Gets data from localStorage if available
-const savedData = localStorage.getItem("rawPokemon") //gets data from localStorage if there is any
-  ? JSON.parse(localStorage.getItem("rawPokemon"))
-  : [];
-let pokemons;
+const localStorageData = JSON.parse(localStorage.getItem("rawPokemon"));
+if(localStorageData && localStorageData.length === 1302) {
+  savedData.push(...localStorageData);
+}
 
+let pokemons;
 let batchSize = 30;
 let start = 0;
 let end = start + batchSize;
@@ -42,15 +43,22 @@ let renderBatch = savedData.slice(start, end);
 
 // Search function event listener
 search.addEventListener("input", (e) => {
-
-   clearTimeout(debounceTimeout);
-   debounceTimeout = setTimeout(() => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
     filter(e.target.value);
   }, 500); // 700ms delay
 });
 
-// Search function
-function filter(input) {
+search.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    clearTimeout(debounceTimeout);
+    filter(e.target.value);
+    search.blur(); // Remove focus from the input field
+  }
+});
+
+// search function
+function filter(input) { 
   if (input.trim() === "") {
     container.innerHTML = "";
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -58,20 +66,25 @@ function filter(input) {
     return;
   }
 
-  const filtered = savedData.filter(pokemon =>
+const filtered = savedData.filter(
+  (pokemon) =>
     pokemon.name.toLowerCase().includes(input.toLowerCase().trim()) ||
     pokemon.id.toString() === input.trim() ||
-    (pokemon.types.some(typeObj => typeObj.type.name.toLowerCase() === input.toLowerCase().trim()))
+    pokemon.types.some(
+      (typeObj) =>
+        typeObj.type.name.toLowerCase() === input.toLowerCase().trim()
+    )
   );
   container.innerHTML = ""; // Clear the list
   button.style.display = "none";
 
-  render(filtered);         // Render only filtered Pokémon
-};
-
+  render(filtered); // Render only filtered Pokémon
+}
 
 // Fetch data from local storage if there is any
-async function fetchData() {savedData.length === 0 ? await fetchApi() : render(renderBatch);} //renders from localStorage or fetches from API
+async function fetchData() {
+  savedData.length === 1302 ? render(renderBatch) : await fetchApi();
+} //renders from localStorage or fetches from API
 
 async function fetchApi() {
   let hasRun = false;
@@ -80,13 +93,15 @@ async function fetchApi() {
   pokemons = data.results; // gets initial data
 
   const pokemonDetails = await Promise.all(
-  pokemons.map((pokemon) => fetch(pokemon.url).then((res) => res.json()))
+    pokemons.map((pokemon) => fetch(pokemon.url).then((res) => res.json()))
   );
 
   let iDetails = pokemonDetails.map((pokemon) => ({
     name: pokemon.name,
     id: pokemon.id,
-    sprite: pokemon.sprites.front_default ? pokemon.sprites.front_default: "./Resources/pokeball.png",
+    sprite: pokemon.sprites.front_default
+      ? pokemon.sprites.front_default
+      : "./Resources/pokeball.png",
     types: pokemon.types,
   }));
 
@@ -102,13 +117,13 @@ async function fetchApi() {
     end = start + batchSize;
     renderBatch = savedData.slice(start, end);
     container.innerHTML = ""; // Clear the list before rendering
-    render(renderBatch)}
+    render(renderBatch);
+  }
 }
-
 
 // General render function for both batch and all
 function render(renderBatch) {
-  search.style.transform = "translatey(60%)"; // show search bar
+  search.style.transform = "translatey(20%)"; // show search bar
   console.log(renderBatch);
 
   renderBatch.forEach((pokemon) => {
@@ -124,22 +139,22 @@ function render(renderBatch) {
 
     const capitalizeName = // Capitalizes first letter and creates h3 for name
       pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-    const nameHTML = document.createElement("h3"); 
+    const nameHTML = document.createElement("h3");
     nameHTML.innerHTML = capitalizeName;
     li.appendChild(nameHTML);
 
     const img = document.createElement("img"); // creates img for sprite
     img.loading = "lazy"; // Native lazy loading
 
-      img.src = pokemon.sprite;
+    img.src = pokemon.sprite;
 
     li.appendChild(img);
 
-    const typeDiv = document.createElement("div"); // creates div for types 
-    const types = pokemon.types.map((typeObj) =>{
+    const typeDiv = document.createElement("div"); // creates div for types
+    const types = pokemon.types.map((typeObj) => {
       return typeObj.type.name;
     });
-    types.forEach((type) => { 
+    types.forEach((type) => {
       const span = document.createElement("span");
       span.style.backgroundColor = typeMap.get(type);
       span.innerHTML = type.charAt(0).toUpperCase() + type.slice(1);
@@ -147,10 +162,16 @@ function render(renderBatch) {
     });
     li.appendChild(typeDiv);
     container.appendChild(li);
-  })};
+  });
+}
 
+// Infinite scroll
 window.addEventListener("scroll", () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 && end < savedData.length && search.value.trim() === "") {
+  if (
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 &&
+    end < savedData.length &&
+    search.value.trim() === ""
+  ) {
     start += batchSize;
     end = start + batchSize;
     const nextBatch = savedData.slice(start, end);

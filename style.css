@@ -13,16 +13,14 @@
 
 body {
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
 
-    background-image: url('Resources/forest.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
-    overflow-y: scroll;
+  background-image: url('./Resources/forest.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow-y: scroll;
 }
 
 input, input:active {
@@ -49,7 +47,7 @@ input, input:active {
 
 
 
-h1{
+h1{ /* title */
     color: #ffde00;
     -webkit-text-stroke: 2px #3b4cca;
     text-shadow: 2px 2px 4px #000000;
@@ -57,7 +55,8 @@ h1{
     letter-spacing: 6px;
     user-select: none;
     font-family: 'PokemonFont', sans-serif;
-    margin-top: 40px;
+    line-height: 2;
+    margin-top: 10px;
 }
 
 .types {   /* for pokemon types */
@@ -76,8 +75,9 @@ span { /* pokemon ID */
     font-size: smaller;
 }
 
-h3 {
+h3 { /* pokemon name */
     display: block;
+    font-size: clamp(1em, 4vw, 1.4em);
 }
 
 ul {
@@ -111,8 +111,9 @@ li {
   opacity: 0;
 }
 
-li img {
+li img { /* pokemon sprite */
     margin-top: auto;
+    width: 150px;
 }
 
 li div {
@@ -140,7 +141,6 @@ button:hover {
 button:active {
     transform: scale(0.95);
 }
-
 
 @media (max-width: 560px) {
 
