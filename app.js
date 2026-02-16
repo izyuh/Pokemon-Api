@@ -3,6 +3,7 @@ const container = document.getElementById("pokemon-list");
 const button = document.getElementById("load");
 const search = document.getElementById("search");
 let debounceTimeout;
+let ApiLength = 1350;
 
 const savedData = [];
 
@@ -30,7 +31,7 @@ const typeMap = new Map([
 
 // Gets data from localStorage if available
 const localStorageData = JSON.parse(localStorage.getItem("rawPokemon"));
-if(localStorageData && localStorageData.length === 1302) {
+if (localStorageData && localStorageData.length === ApiLength) {
   savedData.push(...localStorageData);
 }
 
@@ -58,7 +59,7 @@ search.addEventListener("keydown", (e) => {
 });
 
 // search function
-function filter(input) { 
+function filter(input) {
   if (input.trim() === "") {
     container.innerHTML = "";
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -66,14 +67,14 @@ function filter(input) {
     return;
   }
 
-const filtered = savedData.filter(
-  (pokemon) =>
-    pokemon.name.toLowerCase().includes(input.toLowerCase().trim()) ||
-    pokemon.id.toString() === input.trim() ||
-    pokemon.types.some(
-      (typeObj) =>
-        typeObj.type.name.toLowerCase() === input.toLowerCase().trim()
-    )
+  const filtered = savedData.filter(
+    (pokemon) =>
+      pokemon.name.toLowerCase().includes(input.toLowerCase().trim()) ||
+      pokemon.id.toString() === input.trim() ||
+      pokemon.types.some(
+        (typeObj) =>
+          typeObj.type.name.toLowerCase() === input.toLowerCase().trim(),
+      ),
   );
   container.innerHTML = ""; // Clear the list
   button.style.display = "none";
@@ -83,7 +84,8 @@ const filtered = savedData.filter(
 
 // Fetch data from local storage if there is any
 async function fetchData() {
-  savedData.length === 1302 ? render(renderBatch) : await fetchApi();
+  button.style.display = "none";
+  savedData.length == ApiLength ? render(renderBatch) : await fetchApi();
 } //renders from localStorage or fetches from API
 
 async function fetchApi() {
@@ -93,7 +95,7 @@ async function fetchApi() {
   pokemons = data.results; // gets initial data
 
   const pokemonDetails = await Promise.all(
-    pokemons.map((pokemon) => fetch(pokemon.url).then((res) => res.json()))
+    pokemons.map((pokemon) => fetch(pokemon.url).then((res) => res.json())),
   );
 
   let iDetails = pokemonDetails.map((pokemon) => ({
@@ -124,7 +126,6 @@ async function fetchApi() {
 // General render function for both batch and all
 function render(renderBatch) {
   search.style.transform = "translatey(20%)"; // show search bar
-  console.log(renderBatch);
 
   renderBatch.forEach((pokemon) => {
     const li = document.createElement("li"); //creates li for each pokemon
